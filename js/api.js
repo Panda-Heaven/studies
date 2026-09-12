@@ -1,5 +1,5 @@
 // Paste your deployed Apps Script Web App URL here (ends in /exec).
-const API_URL = 'PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE';
+const API_URL = 'https://script.google.com/macros/s/AKfycbyCcJwX3ElYo0HJZTMvjbnFKPZBxGQLR9Q6ilLA27Yqu4e6cfh_fISXGmxz34iJTnl7JA/exec';
 
 async function apiGet(action, params = {}) {
   const qs = new URLSearchParams({ action, ...params }).toString();
