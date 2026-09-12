@@ -18,6 +18,7 @@ let score = 0, correct = 0, attempts = 0;
 let factLog = [];
 let questionStart = 0;
 let sessionStartTime = 0;
+let awaitingNext = false;
 
 function startPractice(t) {
   table = t;
@@ -47,21 +48,38 @@ function nextQuestion() {
   current = { a: table, b: b };
   document.getElementById('problem-text').textContent = `${table} × ${b}`;
   document.getElementById('progress-text').textContent = `Question ${attempts + 1} of ${totalQuestions + 1}`;
-  document.getElementById('answer-input').value = '';
-  document.getElementById('answer-input').focus();
+  const input = document.getElementById('answer-input');
+  input.value = '';
+  input.disabled = false;
+  input.focus();
+  document.getElementById('feedback-text').textContent = '';
+  document.getElementById('feedback-text').className = 'feedback';
   questionStart = performance.now();
 }
 
 document.getElementById('answer-form').addEventListener('submit', (e) => {
   e.preventDefault();
+  if (awaitingNext) return;
   const val = document.getElementById('answer-input').value;
   if (val === '') return;
   const timeMs = Math.round(performance.now() - questionStart);
-  const isCorrect = Number(val) === current.a * current.b;
+  const correctAnswer = current.a * current.b;
+  const isCorrect = Number(val) === correctAnswer;
   attempts++;
   if (isCorrect) { correct++; score++; }
-  factLog.push({ a: current.a, b: current.b, correct: isCorrect, timeMs });
-  nextQuestion();
+  factLog.push({ a: current.a, b: current.b, correct: isCorrect, timeMs, given: Number(val) });
+
+  const feedbackEl = document.getElementById('feedback-text');
+  if (isCorrect) {
+    feedbackEl.textContent = '✅ Correct!';
+    feedbackEl.className = 'feedback correct';
+  } else {
+    feedbackEl.textContent = `❌ It's ${correctAnswer}`;
+    feedbackEl.className = 'feedback incorrect';
+  }
+  document.getElementById('answer-input').disabled = true;
+  awaitingNext = true;
+  setTimeout(() => { awaitingNext = false; nextQuestion(); }, isCorrect ? 550 : 1100);
 });
 
 async function finishPractice() {
@@ -71,6 +89,7 @@ async function finishPractice() {
   const durationSec = Math.round((Date.now() - sessionStartTime) / 1000);
   document.getElementById('result-score').textContent = `${correct}/${attempts}`;
   document.getElementById('result-stats').textContent = `${accuracyPct}% accuracy`;
+  document.getElementById('suggestion-box').innerHTML = renderSessionSuggestion(buildSessionSuggestion(factLog));
 
   await Api.submitPracticeSession({ username, table, score, correct, attempts, durationSec, factLog });
   const earned = await evaluateAndAwardAchievements(username);
