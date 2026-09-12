@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,6 +24,7 @@
     <div class="session-card">
       <div class="session-progress" id="progress-text"></div>
       <div class="problem-text" id="problem-text"></div>
+      <div class="feedback" id="feedback-text"></div>
       <form id="answer-form">
         <input type="number" inputmode="numeric" class="answer-input" id="answer-input" placeholder="?" autocomplete="off">
         <button type="submit" class="btn btn-primary">Check</button>
@@ -35,6 +37,7 @@
       <div class="page-sub" style="padding:0;">Nice work!</div>
       <div class="result-score" id="result-score"></div>
       <div class="result-stats" id="result-stats"></div>
+      <div id="suggestion-box"></div>
       <div id="new-badges"></div>
       <button class="btn btn-primary" id="practice-again-btn">Pick another table</button>
     </div>
@@ -50,6 +53,7 @@
 <script src="js/api.js"></script>
 <script src="js/session.js"></script>
 <script src="js/achievements.js"></script>
+<script src="js/suggestions.js"></script>
 <script src="js/practice.js"></script>
 </body>
 </html>
